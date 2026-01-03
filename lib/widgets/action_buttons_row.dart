@@ -27,7 +27,7 @@ class ActionButtonsRow extends StatelessWidget {
           icon: Icons.fullscreen_rounded,
           label: 'Scan',
           color: const Color(0xFF1A237E),
-          onTap: () => debugPrint('Navigate to Scan'),
+          onTap: () => context.push("/qr-scanner"),
         ),
       ],
     );

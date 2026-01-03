@@ -21,5 +21,9 @@ GoRouter getRouter() => GoRouter(
       path: "/receive-payment",
       builder: (context, state) => const ReceivePaymentScreen(),
     ),
+    GoRoute(
+      path: "/qr-scanner",
+      builder: (context, state) => const ScanScreen(),
+    ),
   ],
 );

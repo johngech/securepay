@@ -11,3 +11,7 @@ export 'widgets/qrcode_display.dart';
 export 'widgets/recipient_field.dart';
 export 'widgets/transaction_item.dart';
 export 'widgets/balance_header.dart';
+export 'widgets/scanner_overlay.dart';
+export 'widgets/gallary_upload_button.dart';
+export 'widgets/scanner_frame.dart';
+export 'widgets/scanning_indicator.dart';
