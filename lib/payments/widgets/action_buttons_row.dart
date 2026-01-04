@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:securepay/widgets.dart';
+import 'package:securepay/common/widgets.dart';
 
 class ActionButtonsRow extends StatelessWidget {
   const ActionButtonsRow({super.key});

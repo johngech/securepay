@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:securepay/widgets.dart';
+import 'package:securepay/payments/widgets.dart';
 
 class ScannerOverlay extends StatelessWidget {
   const ScannerOverlay({super.key});

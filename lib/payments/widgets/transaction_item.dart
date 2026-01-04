@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:securepay/data/transaction.dart';
+import 'package:securepay/payments/providers/transaction_provider.dart';
+import 'package:securepay/payments/entities/transaction.dart';
 
 class TransactionItem extends ConsumerWidget {
   final Transaction tx;

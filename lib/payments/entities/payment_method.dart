@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
 enum PaymentType { stripe, paypal, bank }
 
@@ -16,7 +15,3 @@ class PaymentMethod {
     required this.icon,
   });
 }
-
-final selectedPaymentProvider = StateProvider<PaymentType>(
-  (ref) => PaymentType.stripe,
-);

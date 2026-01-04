@@ -1,29 +1,13 @@
 import 'package:go_router/go_router.dart';
-import 'package:securepay/securepay_screens.dart';
+import 'package:securepay/common/common_router.dart';
+import 'package:securepay/payments/payment_router.dart';
+import 'package:securepay/security/security_router.dart';
 
 GoRouter getRouter() => GoRouter(
-  initialLocation: '/',
+  initialLocation: '/splash',
   routes: [
-    GoRoute(path: "/", builder: (context, state) => const SplashScreen()),
-    GoRoute(
-      path: "/pin-entry",
-      builder: (context, state) => const PinEntryScreen(),
-    ),
-    GoRoute(
-      path: "/transaction-dashboard",
-      builder: (context, state) => const TransactionDashboardScreen(),
-    ),
-    GoRoute(
-      path: "/send-payment",
-      builder: (context, state) => const SendPaymentScreen(),
-    ),
-    GoRoute(
-      path: "/receive-payment",
-      builder: (context, state) => const ReceivePaymentScreen(),
-    ),
-    GoRoute(
-      path: "/qr-scanner",
-      builder: (context, state) => const ScanScreen(),
-    ),
+    ...CommonRouter.routes,
+    ...PaymentRouter.routes,
+    ...SecurityRouter.routes,
   ],
 );

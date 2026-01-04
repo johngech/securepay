@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:securepay/data/payment_method.dart';
-import 'package:securepay/data/payment_state.dart';
-import 'package:securepay/themes.dart';
-import 'package:securepay/widgets.dart';
+import 'package:securepay/payments/providers/payment_method.dart';
+import 'package:securepay/payments/providers/payment_provider.dart';
+import 'package:securepay/common/themes.dart';
+import 'package:securepay/payments/entities/payment_method.dart';
+import 'package:securepay/payments/widgets.dart';
+import 'package:securepay/common/widgets.dart';
 
 class SendPaymentScreen extends ConsumerStatefulWidget {
   const SendPaymentScreen({super.key});
@@ -56,7 +58,7 @@ class _SendPaymentScreenState extends ConsumerState<SendPaymentScreen> {
             const SizedBox(height: 24),
 
             const LabelText(text: 'Recipient'),
-            
+
             RecipientField(
               controller: _recipientController,
               isVerified: paymentState.isVerified,
@@ -108,7 +110,10 @@ class _SendPaymentScreenState extends ConsumerState<SendPaymentScreen> {
               ),
             ],
 
-            AppButton(label: "Continue", onPressed: () => context.push("/")),
+            AppButton(
+              label: "Continue",
+              onPressed: () => context.push("/confirm-payment"),
+            ),
           ],
         ),
       ),

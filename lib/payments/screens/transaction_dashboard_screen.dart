@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:securepay/data/transaction.dart';
-import 'package:securepay/widgets.dart';
+import 'package:securepay/payments/providers/transaction_provider.dart';
+import 'package:securepay/payments/widgets.dart';
+import 'package:securepay/common/widgets.dart';
 
 class TransactionDashboardScreen extends ConsumerWidget {
   const TransactionDashboardScreen({super.key});

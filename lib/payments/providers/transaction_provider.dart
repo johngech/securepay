@@ -1,20 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-class Transaction {
-  final String id;
-  final String title;
-  final String date;
-  final double amount;
-  final bool isCredit;
-
-  Transaction({
-    required this.id,
-    required this.title,
-    required this.date,
-    required this.amount,
-    required this.isCredit,
-  });
-}
+import 'package:securepay/payments/entities.dart';
 
 final transactionProvider =
     NotifierProvider<TransactionNotifier, List<Transaction>>(() {

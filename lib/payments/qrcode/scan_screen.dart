@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:securepay/widgets.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:securepay/payments/widgets.dart';
 
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key});
@@ -28,23 +29,30 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     });
   }
 
+  // Safe Start method to catch WayDroid/Emulator hardware errors
+  Future<void> _startScanner() async {
+    try {
+      await controller.start();
+    } catch (e) {
+      debugPrint("Scanner failed to start: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Camera not available on this device.")),
+        );
+      }
+    }
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Professional Tip: Stop camera when app is in background to save battery
     // and prevent channel exceptions
     if (!controller.value.isInitialized) return;
 
-    switch (state) {
-      case AppLifecycleState.resumed:
-        controller.start();
-        break;
-      case AppLifecycleState.inactive:
-      case AppLifecycleState.paused:
-      case AppLifecycleState.detached:
-        controller.stop();
-        break;
-      default:
-        break;
+    if (state case AppLifecycleState.resumed) {
+      _startScanner();
+    } else {
+      controller.stop();
     }
   }
 
@@ -65,12 +73,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
           MobileScanner(
             controller: controller,
             onDetect: (capture) {
-              final List<Barcode> barcodes = capture.barcodes;
-              for (final barcode in barcodes) {
-                debugPrint('Barcode found! ${barcode.rawValue}');
-                // Handle the scan result (e.g., navigate to Send Payment)
-                _handleScanResult(barcode.rawValue);
-              }
+              _handleScanResult(capture);
             },
           ),
 
@@ -92,21 +95,52 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
             bottom: 60,
             left: 24,
             right: 24,
-            child: GalleryUploadButton(
-              onTap: () {
-                // logic to pick image from gallery
-              },
-            ),
+            child: GalleryUploadButton(onTap: () => _pickImageFromGallery()),
           ),
         ],
       ),
     );
   }
 
-  void _handleScanResult(String? code) {
-    if (code != null) {
-      // Logic: context.push('/send-payment?id=$code');
-      controller.stop(); // Stop camera once detected
+  void _handleScanResult(BarcodeCapture capture) {
+    final List<Barcode> barcodes = capture.barcodes;
+    if (barcodes.isNotEmpty) {
+      final String? code = barcodes.first.rawValue;
+      if (code != null) {
+        debugPrint('QR Scanned Successfully: $code');
+        // Stop the camera once we have a result
+        controller.stop();
+        //  Navigate to SendPaymentScreen with 'code'
+      }
+    }
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+
+    // 1. Pick the image
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image == null) return;
+
+    try {
+      // 2. Analyze the image.
+      // In the latest mobile_scanner, this returns a BarcodeCapture?
+      final BarcodeCapture? capture = await controller.analyzeImage(image.path);
+
+      // 3. Handle the result manually since analyzeImage
+      // sometimes doesn't fire the onDetect callback automatically
+      if (capture != null && capture.barcodes.isNotEmpty) {
+        _handleScanResult(capture);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No QR code found in this image.')),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint("Gallery analysis error: $e");
     }
   }
 }

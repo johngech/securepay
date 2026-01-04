@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:securepay/data/receive_payment_timer.dart';
-import 'package:securepay/widgets.dart';
+import 'package:securepay/payments/providers/receive_payment_timer.dart';
+import 'package:securepay/payments/widgets.dart';
+import 'package:securepay/common/widgets.dart';
 
 class ReceivePaymentScreen extends ConsumerWidget {
   const ReceivePaymentScreen({super.key});
