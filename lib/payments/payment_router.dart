@@ -24,6 +24,10 @@ class PaymentRouter {
       builder: (context, state) => const ReceivePaymentScreen(),
     ),
     GoRoute(
+      path: "/payment-methods",
+      builder: (context, state) => const PaymentMethodsScreen(),
+    ),
+    GoRoute(
       path: "/qr-scanner",
       builder: (context, state) => const ScanScreen(),
     ),

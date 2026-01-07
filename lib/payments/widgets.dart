@@ -14,3 +14,8 @@ export 'qrcode/scanner_overlay.dart';
 export 'qrcode/scanning_indicator.dart';
 export 'widgets/success_payment_view.dart';
 export 'widgets/transaction_item.dart';
+export 'widgets/add_method_action_list.dart';
+export 'widgets/payment_method_card.dart';
+export 'widgets/payment_account_container.dart';
+export 'widgets/dotted_add_card_button.dart';
+export 'widgets/credit_card_item.dart';

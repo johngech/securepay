@@ -5,4 +5,5 @@ export 'screens/key_entry_screen.dart';
 export 'screens/transaction_dashboard_screen.dart';
 export 'screens/transaction_screen.dart';
 export 'screens/transaction_status_screen.dart';
+export 'screens/payment_methods_screen.dart';
 export 'qrcode/scan_screen.dart';
