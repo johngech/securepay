@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SecurityAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SecurityAppBar({super.key});
@@ -8,12 +9,17 @@ class SecurityAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: const Color(0xFF1A237E),
       elevation: 0,
-      leading: const BackButton(color: Colors.white),
       title: const Text(
         'Security Center',
         style: TextStyle(color: Colors.white),
       ),
       centerTitle: true,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.settings, color: Colors.white),
+          onPressed: () => context.push('/security/settings'),
+        ),
+      ],
     );
   }
 

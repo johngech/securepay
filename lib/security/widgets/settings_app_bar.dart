@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const SettingsAppBar({super.key});
+  final String title;
+  const SettingsAppBar({super.key, this.title = 'Security Settings'});
 
   @override
   Widget build(BuildContext context) {
@@ -10,12 +12,12 @@ class SettingsAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       centerTitle: true,
       // The back button color matches the brand navy (0xFF1A237E)
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Color(0xFF1A237E)),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-      title: const Text(
-        'Security Settings',
+      // leading: IconButton(
+      //   icon: const Icon(Icons.arrow_back, color: Color(0xFF1A237E)),
+      //   onPressed: () => context.go("/transaction-dashboard"),
+      // ),
+      title: Text(
+        title,
         style: TextStyle(
           color: Color(0xFF1A237E),
           fontWeight: FontWeight.bold,

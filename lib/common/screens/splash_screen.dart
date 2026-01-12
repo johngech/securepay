@@ -107,7 +107,7 @@ class GetStartedButton extends StatelessWidget {
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: () => context.push('/pin-entry'),
+        onPressed: () => context.push('/login'),
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF00C853), // Teal/Green color
           shape: RoundedRectangleBorder(

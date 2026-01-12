@@ -1,48 +1,78 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:securepay/common/app_router.dart';
+import 'package:securepay/common/navigation.dart';
 import 'package:securepay/payments/screens.dart';
 
-class PaymentRouter {
-  static final List<RouteBase> routes = <RouteBase>[
+class PaymentRouter implements AppRouter {
+  @override
+  Map<NavDestination, StatefulShellBranch> get shellBranches => {
+    const NavDestination(
+      id: NavId.home,
+      label: 'Home',
+      icon: Icons.home_filled,
+      path: '/transaction-dashboard',
+    ): StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: '/transaction-dashboard',
+          builder: (_, _) => const TransactionDashboardScreen(),
+        ),
+      ],
+    ),
+
+    const NavDestination(
+      id: NavId.history,
+      label: 'History',
+      icon: Icons.history_rounded,
+      path: '/transaction-history',
+    ): StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: '/transaction-history',
+          builder: (_, _) => const TransactionHistoryScreen(),
+        ),
+      ],
+    ),
+
+    const NavDestination(
+      id: NavId.cards,
+      label: 'Cards',
+      icon: Icons.credit_card_rounded,
+      path: '/payment-methods',
+    ): StatefulShellBranch(
+      routes: [
+        GoRoute(
+          path: '/payment-methods',
+          builder: (_, _) => const PaymentMethodsScreen(),
+        ),
+      ],
+    ),
+  };
+
+  @override
+  List<RouteBase> get publicRoutes => [
     GoRoute(
-      path: "/pin-entry",
-      builder: (context, state) => const PinEntryScreen(),
+      path: '/send-payment',
+      builder: (_, _) => const SendPaymentScreen(),
     ),
     GoRoute(
-      path: "/transaction-dashboard",
-      builder: (context, state) => const TransactionDashboardScreen(),
-    ),
-    GoRoute(
-      path: "/transaction-history",
-      builder: (context, state) => const TransactionHistoryScreen(),
-    ),
-    GoRoute(
-      path: "/send-payment",
-      builder: (context, state) => const SendPaymentScreen(),
-    ),
-    GoRoute(
-      path: "/receive-payment",
-      builder: (context, state) => const ReceivePaymentScreen(),
-    ),
-    GoRoute(
-      path: "/payment-methods",
-      builder: (context, state) => const PaymentMethodsScreen(),
-    ),
-    GoRoute(
-      path: "/qr-scanner",
-      builder: (context, state) => const ScanScreen(),
-    ),
-    GoRoute(
-      path: "/confirm-payment",
-      builder: (context, state) => const ConfirmPaymentScreen(
-        amount: '100.00',
-        recipient: 'John Doe',
-        paymentMethod: 'Visa **** 1234',
+      path: '/confirm-payment',
+      builder: (_, _) => const ConfirmPaymentScreen(
+        amount: "100",
+        recipient: "Yohannes",
+        paymentMethod: "Stripe",
       ),
     ),
     GoRoute(
-      path: "/transaction-status",
-      builder: (context, state) =>
-          const TransactionStatusScreen(amount: '100.00'),
+      path: '/receive-payment',
+      builder: (_, _) => const ReceivePaymentScreen(),
     ),
+    GoRoute(path: '/pin-entry', builder: (_, _) => const PinEntryScreen()),
+    GoRoute(
+      path: "/transaction-status",
+      builder: (_, _) => const TransactionStatusScreen(amount: '100.00'),
+    ),
+    GoRoute(path: "/qr-scanner", builder: (_, _) => const ScanScreen()),
   ];
 }

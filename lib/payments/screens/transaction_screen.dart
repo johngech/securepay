@@ -38,7 +38,6 @@ class HistoryAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
-      leading: const BackButton(color: Color(0xFF1A237E)),
       title: const Text(
         'Transaction History',
         style: TextStyle(color: Color(0xFF1A237E), fontWeight: FontWeight.bold),

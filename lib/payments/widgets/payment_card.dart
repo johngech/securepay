@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:securepay/payments/providers/payment_method.dart';
-import 'package:securepay/payments/entities/payment_method.dart';
+import 'package:securepay/payments/entities.dart';
 
 class PaymentMethodCard extends StatelessWidget {
   final PaymentMethod method;

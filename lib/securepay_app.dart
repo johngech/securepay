@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:securepay/app_router.dart';
+// import 'package:securepay/app_router.dart';
+import 'package:securepay/router_config.dart';
 
 class SecurepayApp extends StatelessWidget {
   const SecurepayApp({super.key});
@@ -9,7 +10,7 @@ class SecurepayApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'SecurePay',
       theme: ThemeData(primarySwatch: Colors.blue),
-      routerConfig: getRouter(),
+      routerConfig: routerConfig,
     );
   }
 }

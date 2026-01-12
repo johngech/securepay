@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:securepay/common/widgets.dart';
+import 'package:securepay/common/themes.dart';
 
 class ActionButtonsRow extends StatelessWidget {
   const ActionButtonsRow({super.key});
@@ -13,20 +14,19 @@ class ActionButtonsRow extends StatelessWidget {
         ActionButton(
           icon: Icons.send_rounded,
           label: 'Pay',
-          color: const Color(0xFF1A237E),
-          // Professional Routing: Navigate to the payment screen
+          color: AppColors.primaryBlue,
           onTap: () => context.push('/send-payment'),
         ),
         ActionButton(
           icon: Icons.qr_code_2_rounded,
           label: 'Receive',
-          color: Colors.teal,
+          color: AppColors.actionGreen,
           onTap: () => context.push('/receive-payment'),
         ),
         ActionButton(
           icon: Icons.fullscreen_rounded,
           label: 'Scan',
-          color: const Color(0xFF1A237E),
+          color: AppColors.primaryBlue,
           onTap: () => context.push("/qr-scanner"),
         ),
       ],
