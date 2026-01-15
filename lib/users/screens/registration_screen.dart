@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:securepay/common/widgets.dart';
-import 'package:securepay/users/providers.dart';
+import 'package:securepay/users/user_providers.dart';
 import 'package:securepay/users/widgets.dart';
 
 class RegistrationScreen extends ConsumerWidget {
@@ -40,14 +39,24 @@ class RegistrationScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               const UserFormInput(
-                formControlName: 'fullName',
-                label: 'Full Name',
+                formControlName: 'firstName',
+                label: 'First Name',
+                icon: Icons.person_outline,
+              ),
+              const UserFormInput(
+                formControlName: 'lastName',
+                label: 'Last Name',
                 icon: Icons.person_outline,
               ),
               const UserFormInput(
                 formControlName: 'email',
                 label: 'Email Address',
                 icon: Icons.email_outlined,
+              ),
+              const UserFormInput(
+                formControlName: 'phoneNumber',
+                label: 'Phone Number',
+                icon: Icons.phone,
               ),
               const UserFormInput(
                 formControlName: 'password',
@@ -62,14 +71,7 @@ class RegistrationScreen extends ConsumerWidget {
                 isPassword: true,
               ),
               const SizedBox(height: 24),
-              ReactiveFormConsumer(
-                builder: (context, form, child) => PrimaryButton(
-                  label: "Sign Up",
-                  onPressed: form.valid
-                      ? () => debugPrint("Registering...")
-                      : null,
-                ),
-              ),
+              RegisterActionButton(),
             ],
           ),
         ),
