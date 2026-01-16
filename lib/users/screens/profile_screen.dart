@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:securepay/security/widgets.dart';
+import 'package:securepay/settings/widgets.dart';
 import 'package:securepay/users/widgets.dart';
 
 class ProfileUpdateScreen extends ConsumerStatefulWidget {

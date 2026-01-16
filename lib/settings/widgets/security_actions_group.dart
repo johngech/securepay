@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:securepay/security/widgets/settings_card.dart';
+import 'package:securepay/settings/widgets/settings_card.dart';
 
 class SecurityActionsGroup extends StatelessWidget {
   const SecurityActionsGroup({super.key});

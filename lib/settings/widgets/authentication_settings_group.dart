@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:securepay/security/widgets.dart';
+import 'package:securepay/settings/widgets.dart';
 
 class AuthenticationSettingsGroup extends StatelessWidget {
   const AuthenticationSettingsGroup({super.key});

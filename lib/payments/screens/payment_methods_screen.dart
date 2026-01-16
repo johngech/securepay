@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:securepay/payments/widgets.dart';
-import 'package:securepay/security/widgets.dart';
+import 'package:securepay/settings/widgets.dart';
 
 class PaymentMethodsScreen extends ConsumerWidget {
   const PaymentMethodsScreen({super.key});

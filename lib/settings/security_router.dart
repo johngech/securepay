@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:securepay/common/app_router.dart';
 import 'package:securepay/common/navigation.dart';
-import 'package:securepay/security/screens.dart';
+import 'package:securepay/settings/screens.dart';
 
 class SecurityRouter implements AppRouter {
   @override

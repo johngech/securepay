@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:securepay/security/widgets/device_item_tile.dart';
+import 'package:securepay/settings/widgets/device_item_tile.dart';
 
 class TrustedDevicesList extends StatelessWidget {
   const TrustedDevicesList({super.key});

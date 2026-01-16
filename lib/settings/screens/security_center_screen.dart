@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:securepay/security/widgets.dart';
+import 'package:securepay/settings/widgets.dart';
 
 class SecurityCenterScreen extends StatelessWidget {
   const SecurityCenterScreen({super.key});

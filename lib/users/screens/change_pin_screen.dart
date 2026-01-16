@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:securepay/common/widgets.dart';
-import 'package:securepay/security/widgets.dart';
+import 'package:securepay/settings/widgets.dart';
 import 'package:securepay/users/widgets.dart';
 
 class ChangePinScreen extends ConsumerWidget {

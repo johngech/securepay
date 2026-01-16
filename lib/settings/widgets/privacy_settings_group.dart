@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:securepay/security/widgets.dart';
+import 'package:securepay/settings/widgets.dart';
 
 class PrivacySettingsGroup extends StatelessWidget {
   const PrivacySettingsGroup({super.key});
