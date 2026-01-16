@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:securepay/common/themes.dart';
 
 class PaymentFailedView extends StatelessWidget {
   final String amount;
@@ -91,12 +93,9 @@ class RetryButton extends StatelessWidget {
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: () {
-          // Typically pop back to the Confirm Payment screen to try again
-          Navigator.of(context).pop();
-        },
+        onPressed: () => context.pop(),
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF1A237E),
+          backgroundColor: AppColors.primaryBlue,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -117,10 +116,7 @@ class CancelButton extends StatelessWidget {
       width: double.infinity,
       height: 56,
       child: TextButton(
-        onPressed: () {
-          // Go all the way back to the home/dashboard
-          Navigator.of(context).popUntil((route) => route.isFirst);
-        },
+        onPressed: () => context.go("/transaction-dashboard"),
         child: const Text(
           'Cancel & Go Home',
           style: TextStyle(color: Colors.grey, fontSize: 16),

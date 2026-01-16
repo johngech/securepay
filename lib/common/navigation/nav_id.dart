@@ -1,7 +1,1 @@
-enum NavId {
-  home,
-  history,
-  cards,
-  security,
-  profile,
-}
+enum NavId { home, history, cards, security, users }

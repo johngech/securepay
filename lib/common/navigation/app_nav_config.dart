@@ -28,10 +28,10 @@ class AppNavConfig {
       path: '/payment-methods',
     ),
     NavDestination(
-      id: NavId.profile,
-      label: 'Me',
-      icon: Icons.person,
-      path: '/profile',
+      id: NavId.users,
+      label: 'users',
+      icon: Icons.group,
+      path: '/users',
     ),
   ];
 }

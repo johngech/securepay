@@ -18,7 +18,8 @@ class RegisterRedirectSection extends StatelessWidget {
               style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
             ),
             TextButton(
-              onPressed: () => context.push('/register'), // GoRouter navigation
+              onPressed: () =>
+                  context.push('/users/register'), // GoRouter navigation
               child: const Text(
                 "Sign Up",
                 style: TextStyle(

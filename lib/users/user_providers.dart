@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:securepay/common/http_service.dart';
 import 'package:securepay/common/services/services.dart';
@@ -18,7 +19,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as String,
+      id: json['id'].toString(),
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       email: json['email'] as String,
@@ -76,4 +77,14 @@ final userServiceProvider = Provider<GenericHttpService<User>>((ref) {
 final usersListProvider = FutureProvider.autoDispose<List<User>>((ref) {
   final service = ref.watch(userServiceProvider);
   return service.getAll(); // Uses the logic inside GenericHttpService
+});
+
+final userUpdateLoadingProvider = StateProvider<bool>((ref) => false);
+
+final userDetailsProvider = FutureProvider.autoDispose.family<User, int>((
+  ref,
+  userId,
+) async {
+  final service = ref.watch(userServiceProvider);
+  return service.getById(userId);
 });
