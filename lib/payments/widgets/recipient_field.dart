@@ -29,57 +29,76 @@ class RecipientField extends StatelessWidget {
           controller: controller,
           onChanged: onChanged,
           keyboardType: TextInputType.phone,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           decoration: InputDecoration(
-            hintText: 'Enter phone or account number',
-            hintStyle: TextStyle(
-              color: Colors.grey.shade400,
+            hintText: 'Phone number or ID',
+            hintStyle: const TextStyle(
               fontWeight: FontWeight.normal,
+              color: Colors.grey,
             ),
-            prefixIcon: const Icon(Icons.alternate_email_rounded, size: 20),
-            // Suffix icon logic: Loading vs Verified vs Contacts
-            suffixIcon: isValidating
-                ? const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  )
-                : isVerified
-                ? const Icon(Icons.check_circle, color: Colors.green)
-                : IconButton(
-                    icon: const Icon(Icons.contact_page_outlined),
-                    onPressed: onContactTap,
-                  ),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: const Color(0xFFF8F9FE),
+            prefixIcon: const Icon(Icons.person_outline_rounded),
+            suffixIcon: _buildSuffix(),
+            contentPadding: const EdgeInsets.all(20),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade200),
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade200),
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(
+                color: isVerified ? Colors.green.shade200 : Colors.transparent,
+              ),
             ),
-            errorText: errorText, // Displays the "User not found" error
+            errorText: errorText,
           ),
         ),
-        // Verification Label
         if (isVerified)
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 4),
-            child: Text(
-              'Recipient: $verifiedName',
-              style: const TextStyle(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.only(top: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.green.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.green.withValues(alpha: 0.1)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.verified_user, color: Colors.green, size: 16),
+                const SizedBox(width: 8),
+                Text(
+                  'Verified: $verifiedName',
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
       ],
+    );
+  }
+
+  Widget _buildSuffix() {
+    if (isValidating) {
+      return const Padding(
+        padding: EdgeInsets.all(12.0),
+        child: SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      );
+    }
+    if (isVerified) {
+      return const Icon(Icons.check_circle, color: Colors.green);
+    }
+    return IconButton(
+      icon: const Icon(Icons.contact_page_outlined),
+      onPressed: onContactTap,
     );
   }
 }

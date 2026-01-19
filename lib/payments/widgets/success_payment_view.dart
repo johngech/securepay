@@ -4,7 +4,12 @@ import 'package:securepay/common/themes.dart';
 
 class SuccessPaymentView extends StatelessWidget {
   final String amount;
-  const SuccessPaymentView({super.key, required this.amount});
+  final String transactionCode;
+  const SuccessPaymentView({
+    super.key,
+    required this.amount,
+    required this.transactionCode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +41,13 @@ class SuccessPaymentView extends StatelessWidget {
               color: Color(0xFF1A237E),
             ),
           ),
-          const Text(
-            'Transaction ID: #TRX-992834',
+          Text(
+            'Transaction ID: $transactionCode',
             style: TextStyle(color: Colors.black54),
           ),
           const Spacer(flex: 2),
           // Done Button
-          const DoneButton(),
+          // const DoneButton(),
           const SizedBox(height: 40),
         ],
       ),

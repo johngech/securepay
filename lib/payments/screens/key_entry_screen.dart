@@ -1,46 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:securepay/payments/providers/payment_provider.dart';
+import 'package:securepay/payments/providers/resolve_receiver_provider.dart';
 
-class PinEntryScreen extends StatefulWidget {
-  const PinEntryScreen({super.key});
+class PinEntryScreen extends ConsumerStatefulWidget {
+  final String amount;
+  const PinEntryScreen({super.key, required this.amount});
 
   @override
-  State<PinEntryScreen> createState() => _PinEntryScreenState();
+  ConsumerState<PinEntryScreen> createState() => _PinEntryScreenState();
 }
 
-class _PinEntryScreenState extends State<PinEntryScreen> {
+class _PinEntryScreenState extends ConsumerState<PinEntryScreen> {
   final List<String> _pin = [];
   static const int _maxPinLength = 6;
 
   void _handlePress(String value) {
     if (_pin.length < _maxPinLength) {
-      setState(() {
-        _pin.add(value);
-      });
-
-      // Check if PIN is complete after the update
+      setState(() => _pin.add(value));
       if (_pin.length == _maxPinLength) {
-        _verifyPinAndNavigate();
+        _executeInternalTransfer(); // Call the API instead of hardcoded check
       }
     }
   }
 
-  void _verifyPinAndNavigate() {
+  Future<void> _executeInternalTransfer() async {
     final enteredPin = _pin.join("");
-    const correctPin =
-        "123456"; // This would usually come from a Provider/Vault
 
-    if (enteredPin == correctPin) {
-      context.go('/transaction-dashboard');
-    } else {
-      
-      Future.delayed(const Duration(milliseconds: 300), () {
-        setState(() => _pin.clear());
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid PIN. Please try again.')),
-        );
-      });
+    // 1. Get current transaction data from your existing providers
+    final recipient = ref.read(recipientLookupProvider).user?.contact;
+
+    if (recipient == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error: No recipient found')),
+      );
+      return;
     }
+
+    // 2. Call the Notifier we built for internal payments
+    await ref
+        .read(paymentNotifierProvider.notifier)
+        .sendInternalPayment(
+          contact: recipient,
+          amount: double.tryParse(widget.amount) ?? 0.00,
+          description: "Internal Transfer",
+          pin: enteredPin,
+        );
+
+    // 3. Navigation is handled by the listener in SendPaymentScreen or by watching the state here
+    // However, since we want to show the Status Screen, we check the state:
+    context.go('/transaction-status', extra: widget.amount);
   }
 
   void _handleBackspace() =>

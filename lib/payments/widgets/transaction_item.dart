@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:securepay/payments/providers/transaction_provider.dart';
-import 'package:securepay/payments/entities/transaction.dart';
+import 'package:intl/intl.dart';
+import 'package:securepay/common/themes.dart';
+import 'package:securepay/payments/providers.dart';
 
 class TransactionItem extends ConsumerWidget {
   final Transaction tx;
@@ -10,53 +11,114 @@ class TransactionItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Logic for styling based on transaction type and status
+    final bool isTransfer = tx.type == 'TRANSFER';
+    final Color statusColor = _getStatusColor(tx.status);
+
+    final formattedDate = DateFormat("MMM y,d").format(tx.createdAt);
+    final formattedTime = DateFormat.jm().format(tx.createdAt);
+    final dateTime = "$formattedDate $formattedTime";
     return Slidable(
       key: ValueKey(tx.id),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
-            onPressed: (_) =>
-                ref.read(transactionProvider.notifier).removeTransaction(tx.id),
+            onPressed: (context) => _handleDelete(context, ref),
             backgroundColor: Colors.redAccent,
             foregroundColor: Colors.white,
             icon: Icons.delete,
             label: 'Delete',
           ),
-          SlidableAction(
-            onPressed: (_) {},
-            backgroundColor: Colors.grey,
-            foregroundColor: Colors.white,
-            icon: Icons.archive,
-            label: 'Archive',
-          ),
         ],
       ),
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         leading: CircleAvatar(
-          backgroundColor: tx.isCredit
-              ? Colors.green.withValues(alpha: 0.1)
-              : Colors.blue.withValues(alpha: 0.1),
+          backgroundColor: AppColors.bgGrey,
           child: Icon(
-            tx.isCredit ? Icons.arrow_downward : Icons.arrow_upward,
-            color: tx.isCredit ? Colors.green : Colors.blue,
-            size: 16,
+            isTransfer ? Icons.swap_horiz : Icons.arrow_upward,
+            color: AppColors.primaryBlue,
+            size: 18,
           ),
         ),
         title: Text(
-          tx.title,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+          tx.description,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
         ),
-        subtitle: Text(tx.date, style: const TextStyle(fontSize: 12)),
-        trailing: Text(
-          '${tx.isCredit ? '+' : ''}\$${tx.amount.toStringAsFixed(2)}',
-          style: TextStyle(
-            color: tx.isCredit ? Colors.teal : Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '$dateTime • ${tx.provider}',
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              'Code: ${tx.transactionCode}',
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 10),
+            ),
+          ],
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              '\$${tx.amount.toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              tx.status,
+              style: TextStyle(
+                color: statusColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 10,
+              ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toUpperCase()) {
+      case 'SUCCESS' || "COMPLETED":
+        return Colors.green;
+      case 'PENDING':
+        return Colors.orange;
+      case 'FAILED':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Future<void> _handleDelete(BuildContext context, WidgetRef ref) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    try {
+      // Use the generic service to delete from the server
+      await ref.read(transactionServiceProvider).delete(tx.id);
+
+      // Refresh the list provider to update the UI
+      ref.invalidate(transactionsListProvider);
+
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(content: Text('Transaction deleted')),
+      );
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Failed to delete: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

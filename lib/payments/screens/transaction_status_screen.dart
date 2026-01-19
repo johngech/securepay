@@ -1,63 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:securepay/payments/providers/payment_provider.dart';
 import 'package:securepay/payments/widgets.dart';
 
-class TransactionStatusScreen extends StatefulWidget {
+class TransactionStatusScreen extends ConsumerWidget {
   final String amount;
 
   const TransactionStatusScreen({super.key, required this.amount});
 
   @override
-  State<TransactionStatusScreen> createState() =>
-      _TransactionStatusScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the real-time state of the payment process
+    final paymentState = ref.watch(paymentNotifierProvider);
 
-enum TransactionState { processing, success, failed }
-
-class _TransactionStatusScreenState extends State<TransactionStatusScreen> {
-  TransactionState _currentState = TransactionState.processing;
-  String _errorMessage = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _processPayment();
-  }
-
-  Future<void> _processPayment() async {
-    try {
-      // Simulate API Call
-      await Future.delayed(const Duration(seconds: 3));
-
-      // Logic to determine success/failure (e.g., status code from server)
-      bool isSuccessful = false;
-
-      if (mounted) {
-        setState(() {
-          _currentState = isSuccessful
-              ? TransactionState.success
-              : TransactionState.failed;
-          _errorMessage = "Insufficient balance in your linked account.";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _currentState = TransactionState.failed;
-        _errorMessage = "Connection lost. Please check your internet.";
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      body: switch (_currentState) {
-        TransactionState.processing => ProcessingPaymentView(),
-        TransactionState.success => SuccessPaymentView(amount: widget.amount),
-        TransactionState.failed => PaymentFailedView(
-          amount: widget.amount,
-          errorReason: _errorMessage,
-        ),
-      },
+      body: paymentState.when(
+        loading: () => const ProcessingPaymentView(),
+        data: (response) {
+          if (response == null) return const ProcessingPaymentView();
+          // Trigger the timed redirection
+          _navigateToHistory(context, ref);
+
+          return SuccessPaymentView(
+            amount: amount,
+            transactionCode: response.transactionCode,
+          );
+        },
+        error: (error, stackTrace) =>
+            PaymentFailedView(amount: amount, errorReason: error.toString()),
+      ),
     );
+  }
+
+  void _navigateToHistory(BuildContext context, WidgetRef ref) {
+    // Wait for 3-4 seconds so the user can read the Transaction ID
+    Future.delayed(const Duration(seconds: 4), () {
+      if (context.mounted) {
+        // Reset the provider so the next time the user enters, it's fresh
+        ref.read(paymentNotifierProvider.notifier).reset();
+
+        context.go('/transaction-history');
+      }
+    });
   }
 }

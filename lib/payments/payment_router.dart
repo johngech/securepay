@@ -68,10 +68,19 @@ class PaymentRouter implements AppRouter {
       path: '/receive-payment',
       builder: (_, _) => const ReceivePaymentScreen(),
     ),
-    GoRoute(path: '/pin-entry', builder: (_, _) => const PinEntryScreen()),
+    GoRoute(
+      path: '/pin-entry',
+      builder: (context, state) {
+        final amount = state.extra as String? ?? '0.0';
+        return PinEntryScreen(amount: amount);
+      },
+    ),
     GoRoute(
       path: "/transaction-status",
-      builder: (_, _) => const TransactionStatusScreen(amount: '100.00'),
+      builder: (context, state) {
+        final amount = state.extra as String? ?? '0.00';
+        return TransactionStatusScreen(amount: amount);
+      },
     ),
     GoRoute(path: "/qr-scanner", builder: (_, _) => const ScanScreen()),
   ];

@@ -88,3 +88,39 @@ final userDetailsProvider = FutureProvider.autoDispose.family<User, int>((
   final service = ref.watch(userServiceProvider);
   return service.getById(userId);
 });
+
+final currentUserProvider = FutureProvider<User>((ref) async {
+  final dio = ref.watch(dioProvider);
+
+  // Call the auth/me endpoint
+  final response = await dio.get('/auth/me');
+
+  // Map the response to your User model
+  return User.fromJson(response.data);
+});
+
+class PinUpdateNotifier extends StateNotifier<AsyncValue<void>> {
+  final Ref ref;
+  PinUpdateNotifier(this.ref) : super(const AsyncValue.data(null));
+
+  Future<void> updatePin({
+    required String userId,
+    required String? oldPin,
+    required String newPin,
+  }) async {
+    state = const AsyncValue.loading();
+
+    state = await AsyncValue.guard(() async {
+      final dio = ref.read(dioProvider);
+      await dio.post<dynamic>(
+        '/users/$userId/change-pin',
+        data: {'oldPin': oldPin, 'newPin': newPin},
+      );
+    });
+  }
+}
+
+final pinUpdateProvider =
+    StateNotifierProvider<PinUpdateNotifier, AsyncValue<void>>((ref) {
+      return PinUpdateNotifier(ref);
+    });

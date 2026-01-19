@@ -1,30 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:securepay/common/themes/app_colors.dart';
+import 'package:securepay/payments/providers.dart';
+import 'package:securepay/payments/widgets.dart';
 
-class TransactionHistoryScreen extends StatelessWidget {
+class TransactionHistoryScreen extends ConsumerWidget {
   const TransactionHistoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transactionsAsync = ref.watch(transactionsListProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const HistoryAppBar(),
-      body: Column(
-        children: [
-          const HistorySearchAndFilter(),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                children: const [
-                  SizedBox(height: 24),
-                  SummaryCardsRow(),
-                  SizedBox(height: 24),
-                  TransactionList(),
-                ],
+      body: RefreshIndicator(
+        onRefresh: () => ref.watch(transactionsListProvider.future),
+        child: Column(
+          children: [
+            const HistorySearchAndFilter(),
+            Expanded(
+              child: transactionsAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, _) => Center(child: Text('Error: $err')),
+                data: (transactions) => SlidableAutoCloseBehavior(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    children: [
+                      const SizedBox(height: 24),
+                      SummaryCardsRow(transactions: transactions),
+                      const SizedBox(height: 24),
+                      TransactionList(transactions: transactions),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -40,12 +54,18 @@ class HistoryAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       title: const Text(
         'Transaction History',
-        style: TextStyle(color: Color(0xFF1A237E), fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: AppColors.primaryBlue,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       actions: [
         IconButton(
           onPressed: () {},
-          icon: const Icon(Icons.download_rounded, color: Color(0xFF1A237E)),
+          icon: const Icon(
+            Icons.download_rounded,
+            color: AppColors.primaryBlue,
+          ),
         ),
       ],
     );
@@ -78,11 +98,10 @@ class HistorySearchAndFilter extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Row(
+            spacing: 8,
             children: const [
               FilterChip(label: 'All', isActive: true),
-              SizedBox(width: 8),
               FilterChip(label: 'Sent', isActive: false),
-              SizedBox(width: 8),
               FilterChip(label: 'Received', isActive: false),
             ],
           ),
@@ -93,25 +112,41 @@ class HistorySearchAndFilter extends StatelessWidget {
 }
 
 class SummaryCardsRow extends StatelessWidget {
-  const SummaryCardsRow({super.key});
+  final List<Transaction> transactions;
+  const SummaryCardsRow({super.key, required this.transactions});
 
   @override
   Widget build(BuildContext context) {
+    // Logic to calculate totals from the actual data
+    final totalSent = transactions
+        .where((t) => t.type == 'TRANSFER' || t.type == 'PAYMENT')
+        .fold(0.0, (sum, item) => sum + item.amount);
+
+    // For this example, assuming 'SUCCESS' counts as received if type is different
+    // Adjust this logic based on your specific business rules
+    final totalReceived = transactions
+        .where(
+          (t) =>
+              (t.status == 'SUCCESS' || t.status == "DEPOSIT") &&
+              t.type != 'PAYMENT',
+        )
+        .fold(0.0, (sum, item) => sum + item.amount);
+
     return Row(
-      children: const [
+      children: [
         Expanded(
           child: SummaryCard(
             label: 'Total Sent',
-            amount: '259.14',
-            color: Color(0xFF1A237E),
+            amount: totalSent.toStringAsFixed(2),
+            color: AppColors.primaryBlue,
           ),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         Expanded(
           child: SummaryCard(
             label: 'Total Received',
-            amount: '3475.00',
-            color: Color(0xFF00C853),
+            amount: totalReceived.toStringAsFixed(2),
+            color: AppColors.actionGreen,
           ),
         ),
       ],
@@ -162,56 +197,26 @@ class SummaryCard extends StatelessWidget {
 }
 
 class TransactionList extends StatelessWidget {
-  const TransactionList({super.key});
+  final List<Transaction> transactions;
+  const TransactionList({super.key, required this.transactions});
 
   @override
   Widget build(BuildContext context) {
+    if (transactions.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 40),
+        child: Text("No transactions found"),
+      );
+    }
     return ListView.separated(
       shrinkWrap: true,
+
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: 5,
+      itemCount: transactions.length,
       separatorBuilder: (context, index) => const Divider(height: 32),
       itemBuilder: (context, index) {
-        // Mock data for the specific items in your screenshot
-        return const TransactionItemTile();
+        return TransactionItem(tx: transactions[index]);
       },
-    );
-  }
-}
-
-class TransactionItemTile extends StatelessWidget {
-  const TransactionItemTile({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const CircleAvatar(
-          backgroundColor: Color(0xFFE8EAF6),
-          child: Icon(Icons.arrow_upward, size: 18, color: Color(0xFF1A237E)),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Starbucks Coffee',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Dec 2, 2025 at 10:30 AM',
-                style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-        const Text(
-          '\$5.99',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-      ],
     );
   }
 }
@@ -226,7 +231,7 @@ class FilterChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
-        color: isActive ? const Color(0xFF1A237E) : const Color(0xFFF5F7FA),
+        color: isActive ? AppColors.primaryBlue : AppColors.primaryBlue,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(

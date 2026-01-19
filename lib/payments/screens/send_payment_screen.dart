@@ -5,6 +5,7 @@ import 'package:securepay/payments/providers/payment_method.dart';
 import 'package:securepay/payments/providers/payment_provider.dart';
 import 'package:securepay/common/themes.dart';
 import 'package:securepay/payments/entities/payment_method.dart';
+import 'package:securepay/payments/providers/resolve_receiver_provider.dart';
 import 'package:securepay/payments/widgets.dart';
 import 'package:securepay/common/widgets.dart';
 
@@ -17,24 +18,39 @@ class SendPaymentScreen extends ConsumerStatefulWidget {
 
 class _SendPaymentScreenState extends ConsumerState<SendPaymentScreen> {
   late TextEditingController _recipientController;
+  late TextEditingController _amountController;
 
   @override
   void initState() {
     super.initState();
     _recipientController = TextEditingController();
+    _amountController = TextEditingController(text: '0.00');
   }
 
   @override
   void dispose() {
-    _recipientController.dispose(); // Critical: prevent memory leaks
+    _recipientController.dispose();
+    _amountController.dispose();
     super.dispose();
+  }
+
+  // Helper to safely parse amount
+  double _getCleanAmount() {
+    return double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0.0;
   }
 
   @override
   Widget build(BuildContext context) {
     final selectedMethod = ref.watch(selectedPaymentProvider);
+    final recipientState = ref.watch(recipientLookupProvider);
+    final stripeState = ref.watch(paymentNotifierProvider);
 
-    final paymentState = ref.watch(paymentProvider);
+    // Listen for Stripe Success/Failure
+    ref.listen(paymentNotifierProvider, (previous, next) {
+      if (next.isLoading) {
+        context.push("/transaction-status", extra: _amountController.text);
+      }
+    });
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -54,22 +70,21 @@ class _SendPaymentScreenState extends ConsumerState<SendPaymentScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LabelText(text: 'Amount'),
-            const AmountInput(balance: '15234.56'),
+            AmountInput(controller: _amountController, balance: '15234.56'),
             const SizedBox(height: 24),
 
             const LabelText(text: 'Recipient'),
 
             RecipientField(
               controller: _recipientController,
-              isVerified: paymentState.isVerified,
-              isValidating: paymentState.isValidating,
-              verifiedName: paymentState.verifiedName,
-              errorText: paymentState.errorMessage,
-              onChanged: (val) =>
-                  ref.read(paymentProvider.notifier).onRecipientChanged(val),
-              onContactTap: () {
-                // Future feature: Open Phone Contacts
-              },
+              isVerified: recipientState.user != null,
+              isValidating: recipientState.isValidating,
+              verifiedName: recipientState.user?.fullName ?? '',
+              errorText: recipientState.errorMessage,
+              onChanged: (val) => ref
+                  .read(recipientLookupProvider.notifier)
+                  .onInputChanged(val),
+              onContactTap: () {},
             ),
 
             const SizedBox(height: 24),
@@ -111,8 +126,24 @@ class _SendPaymentScreenState extends ConsumerState<SendPaymentScreen> {
             ],
 
             AppButton(
-              label: "Continue",
-              onPressed: () => context.push("/confirm-payment"),
+              label: stripeState.isLoading ? "Processing..." : "Continue",
+              onPressed:
+                  (recipientState.user == null ||
+                      _getCleanAmount() <= 0 ||
+                      stripeState.isLoading)
+                  ? null
+                  : () {
+                      final String amountText = _amountController.text;
+                      // final double amount = _getCleanAmount();
+                      // if (selectedMethod == PaymentType.stripe) {
+                      //   ref
+                      //       .read(paymentNotifierProvider.notifier)
+                      //       .processTopUp(amount);
+                      // } else {
+                      //   // context.push("/confirm-payment");
+                      context.push("/pin-entry", extra: amountText);
+                      // }
+                    },
             ),
           ],
         ),

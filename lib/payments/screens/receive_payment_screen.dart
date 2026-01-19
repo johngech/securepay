@@ -28,7 +28,10 @@ class ReceivePaymentScreen extends ConsumerWidget {
         child: Column(
           children: [
             const LabelText(text: 'Request Amount (Optional)'),
-            const AmountInput(balance: ''),
+            AmountInput(
+              controller: TextEditingController(text: "0.0"),
+              balance: '',
+            ),
             const SizedBox(height: 32),
             const QRCodeDisplay(data: 'securepay-user-123'),
             const SizedBox(height: 24),

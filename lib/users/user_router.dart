@@ -3,7 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:securepay/common/app_router.dart';
 import 'package:securepay/common/navigation.dart';
 import 'package:securepay/users/screens.dart';
-import 'package:securepay/users/screens/user_list_screen.dart';
+import 'package:securepay/users/screens/change_pin_screen.dart';
+// import 'package:securepay/users/screens/user_list_screen.dart';
 
 class UserRouter implements AppRouter {
   @override
@@ -15,7 +16,8 @@ class UserRouter implements AppRouter {
       path: '/users',
     ): StatefulShellBranch(
       routes: [
-        GoRoute(path: '/users', builder: (_, _) => const UserListScreen()),
+        // GoRoute(path: '/users', builder: (_, _) => const UserListScreen()),
+        GoRoute(path: '/users', builder: (_, _) => const ChangePinScreen()),
       ],
     ),
   };
@@ -25,6 +27,10 @@ class UserRouter implements AppRouter {
     GoRoute(
       path: '/users/register',
       builder: (_, _) => const RegistrationScreen(),
+    ),
+    GoRoute(
+      path: '/users/change-pin',
+      builder: (_, _) => const ChangePinScreen(),
     ),
     GoRoute(
       path: '/users/:id',

@@ -44,6 +44,8 @@ dependencies:
   dio: ^5.9.0
   flutter_secure_storage: ^10.0.0
   flutter_dotenv: ^6.0.0
+  flutter_stripe: ^12.1.1
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +57,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -94,6 +97,15 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-  #
+  
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: assets/securepay-logo.png
+  adaptive_icon_background: "#ffffff"
+  
+
+  
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
